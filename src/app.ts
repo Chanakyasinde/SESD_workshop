@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import { UserRoutes } from "./routes/user.routes";
+import { TodoRoutes } from "./routes/todo.routes";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -16,15 +17,15 @@ export default class App implements App_Interface {
     PORT: number | string;
     app: express.Application;
     public userRoutes!: UserRoutes;
+    public todoRoutes!: TodoRoutes;
 
     constructor() {
         this.PORT = process.env.PORT || 4000;
         this.app = express();
 
-        this.connectDatabase(); // Connect DB first
+        this.connectDatabase();
         this.initializeMiddlewares();
         this.initializeRoutes();
-        // Start server is called from server.ts usually, but keeping constructor structure as before essentially
     }
 
     private initializeMiddlewares(): void {
@@ -44,15 +45,16 @@ export default class App implements App_Interface {
             console.log("Database Connected Successfully");
         } catch (err) {
             console.error("Database Connection Failed:", err);
-            // process.exit(1); // Optional: Exit if DB fails
         }
     }
 
     initializeRoutes(): void {
         this.userRoutes = new UserRoutes();
-        this.app.use("/api/users", this.userRoutes.router);
+        this.todoRoutes = new TodoRoutes();
 
-        // Root route for sanity check
+        this.app.use("/api/users", this.userRoutes.router);
+        this.app.use("/posts", this.todoRoutes.router);
+
         this.app.get("/", (req, res) => {
             res.send("Server is running!");
         });
