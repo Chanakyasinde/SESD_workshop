@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import { UserRoutes } from "./routes/user.routes";
-import { TodoRoutes } from "./routes/todo.routes";
+import { PostRoutes } from "./routes/post.routes";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -17,7 +17,7 @@ export default class App implements App_Interface {
     PORT: number | string;
     app: express.Application;
     public userRoutes!: UserRoutes;
-    public todoRoutes!: TodoRoutes;
+    public postRoutes!: PostRoutes;
 
     constructor() {
         this.PORT = process.env.PORT || 4000;
@@ -50,10 +50,10 @@ export default class App implements App_Interface {
 
     initializeRoutes(): void {
         this.userRoutes = new UserRoutes();
-        this.todoRoutes = new TodoRoutes();
+        this.postRoutes = new PostRoutes();
 
         this.app.use("/api/users", this.userRoutes.router);
-        this.app.use("/posts", this.todoRoutes.router);
+        this.app.use("/posts", this.postRoutes.router);
 
         this.app.get("/", (req, res) => {
             res.send("Server is running!");
